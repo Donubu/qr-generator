@@ -1,0 +1,12 @@
+// Add these lines to .gitignore
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+.idea
+.bolt
+node_modules
+.next/
+.DS_Store
