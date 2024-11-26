@@ -36,7 +36,7 @@ export default async function QRListPage() {
           <CardTitle>Historial de Códigos QR</CardTitle>
         </CardHeader>
         <CardContent>
-          <QRCodesList />
+          <QRCodesList userSession={session.user} />
         </CardContent>
       </Card>
     </main>

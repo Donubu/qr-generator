@@ -10,7 +10,6 @@ import {Button} from "@/components/ui/button";
 import {Switch} from "@/components/ui/switch";
 import {supabase} from "@/lib/supabase";
 import {toast} from "sonner";
-import {useSession} from "next-auth/react";
 
 export const urlSchema = z.object({
     name: z.string(),
@@ -20,11 +19,10 @@ export const urlSchema = z.object({
 
 type URLFormProps = {
     onSubmit: (data: { url: string }) => void;
+    userSession: any;
 };
 
-export function URLForm({onSubmit}: URLFormProps) {
-
-    const {data: session, status} = useSession();
+export function URLForm({onSubmit, userSession}: URLFormProps ) {
 
     const form = useForm<z.infer<typeof urlSchema>>({
         resolver: zodResolver(urlSchema),
@@ -37,11 +35,6 @@ export function URLForm({onSubmit}: URLFormProps) {
 
     const handleSubmit = async (data: z.infer<typeof urlSchema>) => {
 
-        if (status !== "authenticated" || !session.session?.user?.email) {
-            toast.error("Error de sesión. Por favor, vuelve a iniciar sesión.");
-            return;
-        }
-
         try {
             if (data.enableTracking) {
                 const {data: tracking, error} = await supabase
@@ -50,7 +43,7 @@ export function URLForm({onSubmit}: URLFormProps) {
                         {
                             name: data.name,
                             original_url: data.url,
-                            user_email: session.session.user.email,
+                            user_email: userSession.userSession.email,
                             qr_type: 'url'
                         }
                     ])

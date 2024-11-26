@@ -17,7 +17,7 @@ import type { whatsappSchema } from "./forms/whatsapp-form";
 
 type QRType = "url" | "vcard" | "whatsapp";
 
-export function QRCodeGenerator() {
+export function QRCodeGenerator(userSession) {
   const [qrType, setQRType] = useState<QRType>("url");
   const [qrValue, setQRValue] = useState("");
   const [centerImage, setCenterImage] = useState<string | null>(null);
@@ -70,7 +70,7 @@ END:VCARD`;
           </TabsList>
 
           <TabsContent value="url">
-            <URLForm onSubmit={onUrlSubmit} />
+            <URLForm onSubmit={onUrlSubmit} userSession={userSession} />
           </TabsContent>
 
           <TabsContent value="vcard">

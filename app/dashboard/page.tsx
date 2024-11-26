@@ -38,7 +38,7 @@ export default async function Dashboard() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <QRCodeGenerator />
+          <QRCodeGenerator userSession={session.user} />
         </CardContent>
       </Card>
       <footer className="text-center py-4 text-sm text-muted-foreground">

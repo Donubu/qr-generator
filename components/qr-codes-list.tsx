@@ -2,7 +2,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useSession } from "next-auth/react";
 import { supabase } from "@/lib/supabase";
 import {
   Table,
@@ -28,26 +27,19 @@ type QRCodeData = {
   user_email: string;
 };
 
-export function QRCodesList() {
-  const { data: session, status } = useSession();
+export function QRCodesList(userSession) {
   const [qrCodes, setQrCodes] = useState<QRCodeData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
     async function fetchQRCodes() {
-
-      if (status === "loading") return;
-
-      if (!session?.session?.user?.email) {
-        setLoading(false);
-        return;
-      }
 
       try {
         const { data, error } = await supabase
           .from("qr_tracking")
           .select("*")
-          .eq("user_email", session.session.user.email)
+          .eq("user_email", userSession.userSession.email)
           .order("created_at", { ascending: false });
 
         if (error) throw error;
@@ -62,7 +54,7 @@ export function QRCodesList() {
     }
 
     fetchQRCodes();
-  }, [session?.user?.email, status]);
+  }, [userSession]);
 
   const downloadQR = useCallback(async (qrCode: QRCodeData) => {
     try {
@@ -110,14 +102,6 @@ export function QRCodesList() {
     return (
       <div className="flex justify-center items-center p-8">
         <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (!session?.session?.user?.email) {
-    return (
-      <div className="text-center p-8 text-muted-foreground">
-        Debes iniciar sesión para ver tus códigos QR
       </div>
     );
   }
