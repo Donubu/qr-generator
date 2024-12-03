@@ -126,16 +126,17 @@ END:VCARD`;
           </Card>
         </div>
       </div>
-
-      {qrValue && (
+      
         <div className="bg-muted/50 p-8 rounded-lg">
+        {qrValue && (
           <QRCodeDisplay 
             value={qrValue} 
             centerImage={centerImage} 
             qrColor={qrColor}
           />
+        )}
         </div>
-      )}
+     
     </div>
   );
 }

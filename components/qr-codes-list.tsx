@@ -36,10 +36,11 @@ export function QRCodesList(userSession) {
     async function fetchQRCodes() {
 
       try {
+
         const { data, error } = await supabase
           .from("qr_tracking")
           .select("*")
-          .eq("user_email", userSession.userSession.email)
+
           .order("created_at", { ascending: false });
 
         if (error) throw error;
@@ -123,6 +124,7 @@ export function QRCodesList(userSession) {
             <TableHead>Nombre</TableHead>
             <TableHead>URL/Contenido</TableHead>
             <TableHead className="text-right">Escaneos</TableHead>
+            <TableHead className="text-center">Creador</TableHead>
             <TableHead className="text-right">Acciones</TableHead>
           </TableRow>
         </TableHeader>
@@ -137,6 +139,7 @@ export function QRCodesList(userSession) {
                 {qrCode.original_url}
               </TableCell>
               <TableCell className="text-right">{qrCode.scans}</TableCell>
+              <TableCell className="text-center">{qrCode.user_email}</TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button

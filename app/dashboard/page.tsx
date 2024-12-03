@@ -16,7 +16,7 @@ export default async function Dashboard() {
   }
 
   return (
-    <main className="container mx-auto py-8 px-4 min-h-screen flex flex-col">
+    <main className="w-full py-8 px-4 min-h-screen flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <div className="flex items-center gap-4">
@@ -27,10 +27,10 @@ export default async function Dashboard() {
             </Button>
           </Link>
           <ModeToggle />
-          <UserNav />
+          <UserNav userSession={session.user} />
         </div>
       </div>
-      <Card className="max-w-5xl mx-auto flex-grow">
+      <Card className="w-full flex-grow">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center">Generador de Códigos QR</CardTitle>
           <CardDescription className="text-center">
@@ -41,17 +41,7 @@ export default async function Dashboard() {
           <QRCodeGenerator userSession={session.user} />
         </CardContent>
       </Card>
-      <footer className="text-center py-4 text-sm text-muted-foreground">
-        Desarrollado por{" "}
-        <a
-          href="https://puer.to"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-medium underline hover:text-foreground transition-colors"
-        >
-          Agencia Puerto
-        </a>
-      </footer>
+
     </main>
   );
 }

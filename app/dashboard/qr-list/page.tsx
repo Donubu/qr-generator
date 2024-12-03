@@ -24,17 +24,14 @@ export default async function QRListPage() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold">Mis Códigos QR</h1>
+          <h1 className="text-2xl font-bold">Historial de Códigos QR</h1>
         </div>
         <div className="flex items-center gap-4">
           <ModeToggle />
-          <UserNav />
+          <UserNav userSession={session.user}  />
         </div>
       </div>
       <Card className="flex-grow">
-        <CardHeader>
-          <CardTitle>Historial de Códigos QR</CardTitle>
-        </CardHeader>
         <CardContent>
           <QRCodesList userSession={session.user} />
         </CardContent>
