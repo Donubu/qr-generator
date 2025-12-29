@@ -1,11 +1,16 @@
 import {redirect} from 'next/navigation';
-import {supabase} from '@/lib/supabase';
+import pool from '@/lib/db';
+import { RowDataPacket } from 'mysql2';
 
 export const dynamic = 'force-dynamic';
 
+interface QRRow extends RowDataPacket {
+    original_url: string;
+}
+
 export default async function RedirectPage({
-                                               searchParams,
-                                           }: {
+    searchParams,
+}: {
     searchParams: { [key: string]: string | undefined };
 }) {
     const {id, url} = searchParams;
@@ -15,28 +20,27 @@ export default async function RedirectPage({
     }
 
     try {
-        const {error} = await supabase
-            .rpc('increment_scans', {
-                row_id: id
-            });
-
-        if (error) {
-            console.error('Error updating scan count:', error);
-        }
+        // Incrementar escaneos
+        await pool.query(
+            'UPDATE qr_tracking SET scans = scans + 1 WHERE id = ?',
+            [id]
+        );
     } catch (error) {
         console.error('Error updating scan count:', error);
     }
 
-    const {data, error} = await supabase
-        .from("qr_tracking")
-        .select("original_url")
-        .eq('id', id)
-        .order("created_at", {ascending: false});
+    try {
+        const [rows] = await pool.query<QRRow[]>(
+            'SELECT original_url FROM qr_tracking WHERE id = ?',
+            [id]
+        );
 
-    if (error || data.length < 1) {
-        redirect(decodeURIComponent(url));
+        if (rows.length > 0) {
+            redirect(decodeURIComponent(rows[0].original_url));
+        }
+    } catch (error) {
+        console.error('Error fetching QR:', error);
     }
 
-    const {original_url} = data[0];
-    redirect(decodeURIComponent(original_url));
+    redirect(decodeURIComponent(url));
 }

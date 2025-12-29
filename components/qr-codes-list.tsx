@@ -1,8 +1,6 @@
-// @ts-nocheck
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/lib/supabase";
 import {
   Table,
   TableBody,
@@ -34,17 +32,11 @@ export function QRCodesList(userSession) {
   useEffect(() => {
 
     async function fetchQRCodes() {
-
       try {
+        const response = await fetch('/api/qr-tracking');
+        if (!response.ok) throw new Error('Error fetching QR codes');
 
-        const { data, error } = await supabase
-          .from("qr_tracking")
-          .select("*")
-
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
-
+        const data = await response.json();
         setQrCodes(data || []);
       } catch (error) {
         console.error("Error fetching QR codes:", error);

@@ -6,7 +6,6 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {supabase} from "@/lib/supabase";
 import {toast} from "sonner";
 import {useSession} from "next-auth/react";
 

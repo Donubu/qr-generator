@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client";
 
 import {z} from "zod";
@@ -8,7 +7,6 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Switch} from "@/components/ui/switch";
-import {supabase} from "@/lib/supabase";
 import {toast} from "sonner";
 
 export const urlSchema = z.object({
@@ -34,32 +32,28 @@ export function URLForm({onSubmit, userSession}: URLFormProps ) {
     });
 
     const handleSubmit = async (data: z.infer<typeof urlSchema>) => {
-
         try {
             if (data.enableTracking) {
-                const {data: tracking, error} = await supabase
-                    .from('qr_tracking')
-                    .insert([
-                        {
-                            name: data.name,
-                            original_url: data.url,
-                            user_email: userSession.userSession.email,
-                            qr_type: 'url'
-                        }
-                    ])
-                    .select()
-                    .single();
+                const response = await fetch('/api/qr-tracking', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: data.name,
+                        original_url: data.url,
+                        user_email: userSession.userSession.email,
+                        qr_type: 'url'
+                    })
+                });
 
+                if (!response.ok) throw new Error('Error al crear tracking');
 
-                if (error) throw error;
+                const tracking = await response.json();
 
-                if (tracking) {
-                    const redirectUrl = new URL("/redirect", window.location.origin);
-                    redirectUrl.searchParams.set("id", tracking.id);
-                    redirectUrl.searchParams.set("url", encodeURIComponent(data.url));
-                    onSubmit({url: redirectUrl.toString()});
-                    toast.success("URL con seguimiento generada exitosamente");
-                }
+                const redirectUrl = new URL("/redirect", window.location.origin);
+                redirectUrl.searchParams.set("id", tracking.id);
+                redirectUrl.searchParams.set("url", encodeURIComponent(data.url));
+                onSubmit({url: redirectUrl.toString()});
+                toast.success("URL con seguimiento generada exitosamente");
             } else {
                 onSubmit({url: data.url});
             }
